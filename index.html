@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tidskollen</title>
+    <title>Tidkoll</title>
     <style>
         .pageContainer {
         text-align: center;
@@ -43,13 +43,23 @@
 
         .outerNumberContainer {
         height: 100%;
+        /* width: 100%; */
         position: absolute; 
+        transform-origin: 50% 50%;
+        margin: 0;
+        padding: 0;
         }
 
         .innerNumberContainer {
+        /* height: 100%; */
+        /* width: 100%; */
         font-size: 30px;
         font-weight: bold;  
         line-height: 60px;
+        -webkit-transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
+        margin: 0;
+        padding: 0;
         }
 
         .hand {
@@ -116,7 +126,7 @@
             var currentHour = this.dateTime.getHours();
             var currentCategory = '';
             dayCategories.forEach(function(c) {
-                if (c.time.indexOf(currentHour) > 0) {
+                if (c.time.indexOf(currentHour) >= 0) {
                     document.getElementById('categoryOfDay').innerHTML = c.name;
                 } 
             });
@@ -147,11 +157,15 @@
             if (isOuterContainer) {
                 numberContainer.className = 'outerNumberContainer';
                 numberContainer.style.webkitTransform = 
-                    'rotate(' + getDegreesForNumber(number) + 'deg)';
+                    'translate3D(0, 0, 0) rotate(' + getDegreesForNumber(number) + 'deg)';
+                numberContainer.style.transform = 
+                    'translate3D(0, 0, 0) rotate(' + getDegreesForNumber(number) + 'deg)';
             } else {
                 numberContainer.className = 'innerNumberContainer';
                 numberContainer.style.webkitTransform = 
-                    'rotate(' + getDegreesForNumber(number * -1) + 'deg)';
+                    'translate3D(0, 0, 0) rotate(' + getDegreesForNumber(number * -1) + 'deg)';
+                numberContainer.style.transform = 
+                    'translate3D(0, 0, 0)) rotate(' + getDegreesForNumber(number * -1) + 'deg)';
                 numberContainer.textContent = number;
             }
             return numberContainer;
