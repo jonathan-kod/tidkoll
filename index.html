@@ -87,7 +87,7 @@
         function setTime() {
             var hour = this.dateTime.getHours();
             var minutes = this.dateTime.getMinutes();
-            document.getElementById('time').innerHTML = hour + ':' + minutes;
+            document.getElementById('time').innerHTML = String(hour).padStart(2, '0') + ':' + String(minutes).padStart(2, '0');
         }
 
         function setDateText() {

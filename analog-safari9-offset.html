@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tidkoll</title>
+    <style>
+        .pageContainer {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+        .weekDay {
+        font-size: 150px;
+        font-weight: bolder;
+        margin: 0px;
+        }
+
+        .dayCategory {
+        margin-top: 0px;
+        font-size: 100px;
+        font-weight: bolder;
+        margin: 0px;
+        }
+
+        .date {
+        font-size: 80px;
+        font-weight: bolder;
+        margin: 0px;
+        }
+
+        .clock {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 300px;
+        height: 300px;
+        border: 10px solid black;  
+        border-radius: 50%;
+        }
+
+        .outerNumberContainer {
+        height: 100%;
+        /* width: 100%; */
+        position: absolute; 
+        transform-origin: 50% 50%;
+        margin: 0;
+        padding: 0;
+        }
+
+        .innerNumberContainer {
+        /* height: 100%; */
+        /* width: 100%; */
+        font-size: 30px;
+        font-weight: bold;  
+        line-height: 60px;
+        -webkit-transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
+        margin: 0;
+        padding: 0;
+        }
+
+        .hand {
+        position: absolute;
+        background: black;
+        transform-origin: 50% 80%;
+        }
+
+        .minuteHand {
+        width: 6px;
+        height: 40%;    
+        top: 17%;
+        border-radius: 40% 40% 0 0;
+        }
+        
+        .hourHand {
+        width: 10px;
+        height: 25%;
+        top: 29%;
+        border-radius: 50% 50% 0 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="pageContainer">
+        <p id="dayOfWeek" class="weekDay"></p>
+        <p id="categoryOfDay" class="dayCategory"></p>
+        <div id="clockContainer" class="clock">
+            <div id="minuteHand" class="hand minuteHand"></div>
+            <div id="hourHand" class="hand hourHand"></div>
+        </div>
+        <p id="dateText" class="date"></p>
+    </div>
+
+    <script>
+        this.dateTime = new Date();
+        setNumbersForClock();
+        window.setInterval(function() {
+            this.dateTime = new Date();
+            
+            setDayOfWeek();
+            setCategoryOfDay();
+            setDateText();
+            setClockHands();
+        }, 1000);
+
+        function setDayOfWeek() {
+        var weekDays = [
+            'Söndag', 'Måndag', 'Tisdag', 'Onsdag',
+            'Torsdag', 'Fredag', 'Lördag'
+        ];
+        document.getElementById('dayOfWeek').innerHTML = weekDays[this.dateTime.getDay()];
+        }     
+
+        function setCategoryOfDay() {
+            var dayCategories = [
+                { name: 'Morgon', time: [5, 6, 7, 8] },
+                { name: 'Förmiddag', time: [9, 10, 11] },
+                { name: 'Eftermiddag', time: [12, 13, 14, 15, 16, 17] },
+                { name: 'Kväll', time: [18, 19, 20, 21, 22] },
+                { name: 'Natt', time: [23, 24, 0, 1, 2, 3, 4] }
+            ];
+            var currentHour = this.dateTime.getHours();
+            var currentCategory = '';
+            dayCategories.forEach(function(c) {
+                if (c.time.indexOf(currentHour) >= 0) {
+                    document.getElementById('categoryOfDay').innerHTML = c.name;
+                } 
+            });
+        }
+
+        function setDateText() {
+            var months = [ 
+                'Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli',
+                'Augusti', 'September', 'Oktober', 'November', 'December'
+            ];
+            document.getElementById('dateText').innerHTML = 
+                this.dateTime.getDate() + ' ' + months[this.dateTime.getMonth()];
+        }
+
+        function setNumbersForClock() {
+            var clockNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            var clockContainer = document.getElementById('clockContainer');
+            clockNumbers.forEach(function(n) {
+                var outerNumberContainer = setupNumberContainer(n, true);
+                var innerNumberContainer = setupNumberContainer(n, false);
+                outerNumberContainer.appendChild(innerNumberContainer);
+                clockContainer.appendChild(outerNumberContainer);
+            })
+        }
+
+        function setupNumberContainer(number, isOuterContainer) {
+            var numberContainer = document.createElement('div');
+            if (isOuterContainer) {
+                numberContainer.className = 'outerNumberContainer';
+                numberContainer.style.webkitTransform = 
+                    'translateX(-50%) rotate(' + getDegreesForNumber(number) + 'deg)';
+                numberContainer.style.transform = 
+                    'translateX(-50%) rotate(' + getDegreesForNumber(number) + 'deg)';
+            } else {
+                numberContainer.className = 'innerNumberContainer';
+                numberContainer.style.webkitTransform = 
+                    'translate3D(0, 0, 0) rotate(' + getDegreesForNumber(number * -1) + 'deg)';
+                numberContainer.style.transform = 
+                    'translate3D(0, 0, 0) rotate(' + getDegreesForNumber(number * -1) + 'deg)';
+                numberContainer.textContent = number;
+            }
+            return numberContainer;
+        }
+
+        function getDegreesForNumber(number) {
+            return number * 30;
+        }
+
+        function setClockHands() {
+            document.getElementById('minuteHand').style.webkitTransform =
+                'rotate(' + this.getMinuteHandDegrees() + 'deg)';
+            document.getElementById('hourHand').style.webkitTransform =
+                'rotate(' + this.getHourHandDegrees() + 'deg)';
+        }
+
+        function getMinuteHandDegrees() {
+            var wholeMinuteDegrees = this.dateTime.getMinutes() * 6;
+            var secondsDegreesForMinuteHand= this.dateTime.getSeconds() * 0.1;
+            return wholeMinuteDegrees + secondsDegreesForMinuteHand;
+        }
+
+        function getHourHandDegrees() {
+            var wholeHourDegrees = this.dateTime.getHours() * 30;
+            var minutesDegreesForHourHand = this.dateTime.getMinutes() * 0.5;
+            return wholeHourDegrees + minutesDegreesForHourHand;
+        }
+    </script>
+</body>
+</html> 
